@@ -4,6 +4,7 @@
 
 #include <random>
 #include "modulArithmetics.h"
+#include "LongArithmetic.h"
 
 using ll = long long;
 ll fastPow(ll a, ll step, ll mod){

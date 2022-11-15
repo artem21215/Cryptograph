@@ -2,6 +2,7 @@
 #include <string>
 #include "modulArithmetics.h"
 #include "Speakers.h"
+#include "LongArithmetic.h"
 
 using ll = long long;
 using namespace std;

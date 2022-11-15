@@ -7,6 +7,7 @@
 
 #include <functional>
 #include <string>
+#include "LongArithmetic.h"
 
 using namespace std;
 
@@ -37,8 +38,9 @@ namespace Users_NS {
         explicit User(int mod);
 
         //ll calcMessage(ll partMessage, KeyIndex keyIndex);
-        ll
-        calcMessage(ll partMessage, const function<int(int, int, int)> &calcLocalMessage, const string &paramForLambda);
+        ll calcMessage(ll partMessage,
+                       const function<int(int, int, int)> &calcLocalMessage,
+                       const string &paramForLambda);
 
         void setup();
 

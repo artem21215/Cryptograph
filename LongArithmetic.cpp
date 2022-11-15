@@ -7,11 +7,47 @@
 #include <utility>
 #include <vector>
 using namespace std;
-LongArithmetic::LongArithmetic(string other) : number(std::move(other)) {
+
+static void deleteExtraSpaces(string& longString){
+    std::reverse(longString.begin(), longString.end());
+    while (!longString.empty() && longString.back()=='0')
+        longString.pop_back();
+    std::reverse(longString.begin(), longString.end());
+}
+LongArithmetic::LongArithmetic(const string& other) : number(other) {
     if (this->number[0] == '-') {
         isPositive = false;
         number.erase(number.begin());
     }
+    deleteExtraSpaces(this->number);
+    if (number.empty())
+        number+='0';
+    if (number == "0")
+        isPositive = true;
+}
+
+LongArithmetic::LongArithmetic(const LongArithmetic& other):isPositive(other.isPositive), number(other.number){
+    deleteExtraSpaces(this->number);
+    if (number.empty())
+        number+='0';
+    if (number == "0")
+        isPositive = true;
+}
+
+LongArithmetic& LongArithmetic::operator=(const LongArithmetic& other){
+    auto otherStr = other.getString();
+    this->isPositive = true;
+    if (!otherStr.empty() && otherStr.front() == '-') {
+        otherStr.erase(otherStr.begin());
+        this->isPositive = false;
+    }
+    this->number = otherStr;
+    deleteExtraSpaces(this->number);
+    if (number.empty())
+        number+='0';
+    if (number == "0")
+        isPositive = true;
+    return *this;
 }
 
 LongArithmetic LongArithmetic::operator-() const {
@@ -62,7 +98,7 @@ LongArithmetic LongArithmetic::operator*(const LongArithmetic& other) const{
     if (second.size() > first.size())
         swap(first, second);
 
-    auto copyThis = *this;
+    auto copyThis = LongArithmetic(first);
     if (!isPositive)
         copyThis = -copyThis;
     vector<LongArithmetic> simpleMul;
@@ -87,12 +123,12 @@ LongArithmetic LongArithmetic::operator*(const LongArithmetic& other) const{
 
 LongArithmetic LongArithmetic::operator+(const LongArithmetic& other) const {
     if (this->isPositive != other.isPositive){
-        auto first = *this;
-        auto second = other;
-        if (!first.isPositive)
-            std::swap(first, second);
-        second.isPositive = true;
-        return first - second;
+        auto myFirst = *this;
+        auto mySecond = other;
+        if (!myFirst.isPositive)
+            std::swap(myFirst, mySecond);
+        mySecond.isPositive = true;
+        return myFirst - mySecond;
     }
     auto first = this->number;
     auto second = other.number;
@@ -124,7 +160,66 @@ LongArithmetic LongArithmetic::operator+(const LongArithmetic& other) const {
     return result;
 }
 
-bool LongArithmetic::operator<(const LongArithmetic &other) const {
+static pair<LongArithmetic, LongArithmetic> calcDivide(const LongArithmetic& dividend,
+                                                       const LongArithmetic& divisor){
+    auto dividentStr = dividend.getString();
+    if (dividentStr[0] == '-')
+        dividentStr.erase(dividentStr.begin());
+    auto copyDivisor = divisor;
+    if (copyDivisor < LongArithmetic("0"))
+        copyDivisor = - copyDivisor;
+    string divPartStr;
+    string modPartStr;
+
+    LongArithmetic curExtra("0");
+    auto it = 0;
+    auto curSubstring = LongArithmetic("0");
+    bool needExit = false;
+    while (true) {
+        while (curSubstring < copyDivisor) {
+            divPartStr.push_back('0');
+            if (it >= dividentStr.size()){
+                modPartStr = curSubstring.getString();
+                needExit = true;
+                break;
+            }
+            curSubstring = curSubstring * LongArithmetic("10");
+            curSubstring = curSubstring + LongArithmetic(string(1,dividentStr[it]));
+            ++it;
+        }
+        if (divPartStr.empty())
+            break;
+        divPartStr.pop_back();
+        if (needExit){
+            break;
+        }
+
+        LongArithmetic curMulMember = LongArithmetic("0");
+        int mul = 0;
+        while (curMulMember <= curSubstring) {
+            ++mul;
+            curMulMember = curMulMember + copyDivisor;
+        }
+        mul--;
+        curMulMember = curMulMember - copyDivisor;
+        divPartStr += to_string(mul);
+        curSubstring = curSubstring - curMulMember;
+    }
+    bool positive = true;
+    return (divisor*dividend < LongArithmetic("0")) ?
+           make_pair(-LongArithmetic(divPartStr), (-LongArithmetic(modPartStr) + copyDivisor)%copyDivisor) :
+           make_pair(LongArithmetic(divPartStr), LongArithmetic(modPartStr));
+}
+
+LongArithmetic LongArithmetic::operator/(const LongArithmetic& other) const{
+    return calcDivide(*this, other).first;
+}
+
+LongArithmetic LongArithmetic::operator%(const LongArithmetic& other) const{
+    return calcDivide(*this, other).second;
+}
+
+bool LongArithmetic::operator<(const LongArithmetic &other) const{
     bool result = false;
     if (number.size() < other.number.size())
         result = true;

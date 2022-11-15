@@ -5,6 +5,7 @@
 #ifndef THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H
 #define THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H
 #include <vector>
+#include "LongArithmetic.h"
 
 using ll = long long;
 struct GcdReturn{
