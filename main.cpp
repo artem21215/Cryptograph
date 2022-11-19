@@ -67,11 +67,12 @@ namespace {
 
      */
     static void runSignExample() {
-        auto mod = findRandSafePrime<LongArithmetic>(256);
+        auto p = findRandSafePrime<LongArithmetic>(100);
 
-        Users_NS::User<LongArithmetic> alice(mod);
-        Users_NS::User<LongArithmetic> bob(mod);
+        Users_NS::User<LongArithmetic> alice(p);
+        Users_NS::User<LongArithmetic> bob(p);
         Sign_NS::RSA<LongArithmetic> signRSA;
+        Sign_NS::RSA<LongArithmetic> signElGamal;
 
         /*bob.g = alice.g;
         alice.setup();
@@ -94,15 +95,22 @@ namespace {
         const string codedFileVerrnam = R"(C:\Users\artem\Desktop\Crypt\pictureCodedVernan.png)";
         const string decodedFileVerrnam = R"(C:\Users\artem\Desktop\Crypt\pictureDecodedVernan.png)";
 
-        signRSA.signing(inputFile,bob);
+        cout << "RSA CHECK:" << endl;
+        signRSA.signing(inputFile,alice);
         if (signRSA.checkSign(inputFile, alice)){
             cout << "Sign is belong to Alice!" << endl;
         }
         else
             cout << "Sign is not belong to Alice!" << endl;
 
-        //Sign_NS::RSA rsa;
-        //rsa.signing(R"(C:\Users\artem\Desktop\Crypt\IP.Pirogova.s04e02.2021.WEB-DL.(1080p).mkv)", codedFileRSA, alice, bob);
+        cout << "ElGamal CHECK:" << endl;
+        signElGamal.signing(signedFileRSA,alice);
+        if (signElGamal.checkSign(signedFileRSA, alice)){
+            cout << "Sign is belong to Alice!" << endl;
+        }
+        else
+            cout << "Sign is not belong to Alice!" << endl;
+
     }
 
 

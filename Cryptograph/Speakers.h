@@ -22,8 +22,10 @@ namespace Users_NS {
         Type privateKey{};
         Type cRSA{};
         Type cVernam{};
+        Type elGamalX{};
 
     public:
+        Type elGamalY{};
         Type nRSA{};
         Type dRSA{};
         Type nRSAOther{};

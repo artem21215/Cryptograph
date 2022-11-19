@@ -52,14 +52,15 @@ namespace Sign_NS {
                       Users_NS::User<Type> &alice) override;
     };
 
-    /*class Vernam : public IFileSign {
+    template<typename Type>
+    class ElGamal : public IFileSign<Type> {
     public:
-        void signing(const string &inputFileName, const string &outputFileName,
-                    Users_NS::User &alice, Users_NS::User &bob) override;
+        void signing(const string &inputFileName,
+                     Users_NS::User<Type> &alice) override;
 
-        void checkSign(const string &inputFileName, const string &outputFileName,
-                      Users_NS::User &alice, Users_NS::User &bob) override;
-    };*/
+        bool checkSign(const string &inputFileName,
+                       Users_NS::User<Type> &alice) override;
+    };
 }
 
 

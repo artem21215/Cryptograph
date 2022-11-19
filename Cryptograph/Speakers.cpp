@@ -34,7 +34,14 @@ namespace Users_NS{
         //koeffDecode = fastPow(koeffCode,tempMod-3, tempMod);
         //privateKey = koeffCode;
         //g = chooseRandomG(mod, (mod-1)/2);
-        ll lenRSABits = 100;
+        constexpr int lenElGamalG = 90;
+        g = findRandSafePrime<LongArithmetic>(lenElGamalG);
+        while (fastPow(g, (mod-1)/2, mod) == 1)
+            g = findRandSafePrime<LongArithmetic>(lenElGamalG);
+        elGamalX = findRandSafePrime<LongArithmetic>(lenElGamalG) % (mod-1);
+        elGamalY = fastPow(g,elGamalX, mod);
+
+        constexpr int lenRSABits = 100;
         Type pRSA = findRandSafePrime<LongArithmetic>(lenRSABits);
         Type qRSA = findRandSafePrime<LongArithmetic>(lenRSABits);
         nRSA = pRSA*qRSA;
@@ -88,7 +95,7 @@ namespace Users_NS{
         else if (paramForLambda == "VD"){
             return calcLocalMessage(partMessage, cVernam, 0);
         }
-        return 00;
+        return 0;
     }
 
     template class User<LongArithmetic>;

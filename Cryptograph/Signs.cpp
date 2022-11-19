@@ -272,4 +272,110 @@ namespace Sign_NS{
         return fileHash == fastPow(LongArithmetic(mayBeStrSign), user.dRSA, user.nRSA);
     }
     template class RSA<LongArithmetic>;
+
+    template<typename Type>
+    void ElGamal<Type>::signing(const string& inputFileName,
+                            Users_NS::User<Type>& user) {
+        std::ifstream input( inputFileName, std::ifstream::binary );
+        char message;
+        string fullFile;
+        CalcHashMD5 hashHolder;
+        constexpr int maxBufSize = 10000;
+        ll cntTemp = 0;
+        while (input.get(message)) {
+            ++cntTemp;
+            fullFile+=message;
+            if (fullFile.size()>maxBufSize) {
+                hashHolder.addStringToHash(fullFile);
+                fullFile.clear();
+            }
+        }
+        cout << cntTemp << endl;
+        input.close();
+        hashHolder.addStringToHash(fullFile);
+        auto fileHashOct = hashHolder.getHash();
+        auto fileHash = transformToDec(fileHashOct);
+        cout << fileHashOct << endl;
+        cout << fileHash.getString() << endl;
+
+        constexpr int lenElGamalG = 90;
+        auto k = findRandSafePrime<LongArithmetic>(lenElGamalG) % (user.getMod()-2) + 1;
+        while (gcd(k,user.getMod()-1).g != 1)
+            k = findRandSafePrime<LongArithmetic>(lenElGamalG) % (user.getMod()-2) + 1;
+        auto r = fastPow(user.g,k,user.getMod());
+        //auto u = (fileHash - x * r) % (user.getMod()-1);
+        auto calculatorMessage = [r](LongArithmetic message, LongArithmetic key, LongArithmetic mod){return (message - key * r) % (mod-1);};
+        auto u = user.calcMessage(fileHash, calculatorMessage,"EC");
+        auto kInverted = gcd<LongArithmetic>(user.getMod()-1,k).y + (user.getMod()-1);
+        auto s = kInverted * u % (user.getMod()-1);
+
+
+        ll cntOfExtraZeroR = user.getMod().getString().size() - r.getString().size();
+        ll cntOfExtraZeroS = user.getMod().getString().size() - s.getString().size();
+
+        string strSignToFile;
+        for (int i=0;i<cntOfExtraZeroR;++i)
+            strSignToFile+='0';
+        strSignToFile +=r.getString();
+
+        for (int i=0;i<cntOfExtraZeroS;++i)
+            strSignToFile+='0';
+        strSignToFile +=s.getString();
+
+        std::ofstream output;
+        output.open(inputFileName, std::ios_base::app);
+        cout << strSignToFile << endl;
+        cout << endl;
+        cout << "###############" << endl;
+        for (auto v:strSignToFile)
+            output << v;
+        output.close();
+    }
+
+    template<typename Type>
+    bool ElGamal<Type>::checkSign(const string& inputFileName,
+                              Users_NS::User<Type>& targetUser) {
+        LongArithmetic fileSize;
+        std::ifstream input( inputFileName, std::ifstream::binary );
+        char message;
+        while (input.get(message)) {
+            fileSize = fileSize+1;
+        }
+        input.close();
+
+        input.open( inputFileName, std::ifstream::binary );
+        CalcHashMD5 hashHolder;
+        constexpr int maxBufSize = 10000;
+        string fullFile;
+        for (LongArithmetic i(0); i < fileSize - targetUser.getMod().getString().size() * 2; i = i+1) {
+            input.get(message);
+            fullFile+=message;
+            if (fullFile.size()>maxBufSize) {
+                hashHolder.addStringToHash(fullFile);
+                fullFile.clear();
+            }
+        }
+        hashHolder.addStringToHash(fullFile);
+        auto fileHashOct = hashHolder.getHash();
+        auto fileHash = transformToDec(fileHashOct);
+        cout << fileHashOct << endl;
+        cout << fileHash.getString() << endl;
+        string mayBeStrSign;
+        while (input.get(message)) {
+            mayBeStrSign+=message;
+        }
+
+        input.close();
+
+        cout << mayBeStrSign << endl;
+        string r,s;
+        auto lenMod = targetUser.getMod().getString().size();
+        for (int i=0;i<lenMod; ++i){
+            r+=mayBeStrSign[i];
+            s+=mayBeStrSign[lenMod + i];
+        }
+        return fastPow(targetUser.g, fileHash, targetUser.getMod()) == (fastPow(targetUser.g, fileHash, targetUser.getMod()) *
+                                                                       fastPow(targetUser.g, fileHash, targetUser.getMod()))%targetUser.getMod();
+    }
+    template class ElGamal<LongArithmetic>;
 }
