@@ -9,8 +9,9 @@
 #include <random>
 
 namespace CryptoGraph_NS{
-    void Shamir::coding(const string& inputFileName, const string& outputFileName,
-                        Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void Shamir<Type>::coding(const string& inputFileName, const string& outputFileName,
+                        Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         char message;
@@ -28,8 +29,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void Shamir::decoding(const string& inputFileName, const string& outputFileName,
-                          Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void Shamir<Type>::decoding(const string& inputFileName, const string& outputFileName,
+                          Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         int message;
@@ -47,8 +49,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void ElGamal::coding(const string& inputFileName, const string& outputFileName,
-                         Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void ElGamal<Type>::coding(const string& inputFileName, const string& outputFileName,
+                         Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         //mod = 10000007; g from 2.2 diffi-helmon; For users create secret key and public and send others
         // A -> B : A gen k{1,mod-1}, r = g^k mod p, e = m*publicB^k mod p; B calculate m'=e*r^(p-1-secretB) mod p
         std::ifstream input( inputFileName, std::ifstream::binary );
@@ -78,8 +81,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void ElGamal::decoding(const string& inputFileName, const string& outputFileName,
-                           Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void ElGamal<Type>::decoding(const string& inputFileName, const string& outputFileName,
+                           Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         int messageR{};
@@ -97,8 +101,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void RSA::coding(const string& inputFileName, const string& outputFileName,
-                     Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void RSA<Type>::coding(const string& inputFileName, const string& outputFileName,
+                     Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         char message;
@@ -116,8 +121,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void RSA::decoding(const string& inputFileName, const string& outputFileName,
-                       Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void RSA<Type>::decoding(const string& inputFileName, const string& outputFileName,
+                       Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         int message{};
@@ -133,8 +139,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void Vernam::coding(const string& inputFileName, const string& outputFileName,
-                        Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void Vernam<Type>::coding(const string& inputFileName, const string& outputFileName,
+                        Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         char message;
@@ -148,8 +155,9 @@ namespace CryptoGraph_NS{
         output.close();
     }
 
-    void Vernam::decoding(const string& inputFileName, const string& outputFileName,
-                          Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void Vernam<Type>::decoding(const string& inputFileName, const string& outputFileName,
+                          Users_NS::User<Type>& alice, Users_NS::User<Type>& bob) {
         std::ifstream input( inputFileName, std::ifstream::binary );
         std::ofstream output( outputFileName, std::ios::binary );
         char message{};

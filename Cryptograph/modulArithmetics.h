@@ -5,21 +5,27 @@
 #ifndef THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H
 #define THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H
 #include <vector>
-#include "LongArithmetic.h"
 
 using ll = long long;
+template<typename Type>
 struct GcdReturn{
-    ll x{};
-    ll y{};
-    ll g{};
+    Type x;
+    Type y;
+    Type g;
 };
 
-ll fastPow(ll a, ll step, ll mod);
+template<typename Type>
+Type fastPow(Type a, Type step, Type mod);
 
-GcdReturn gcd(ll a, ll b);
+template<typename Type>
+GcdReturn<Type> gcd(Type a, Type b);
 
+template<typename Type>
 int chooseRandomQ();
 
 int chooseRandomG(int mod, int q);
+
+template<typename Type>
+Type findRandSafePrime(ll bits);
 
 #endif //THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H

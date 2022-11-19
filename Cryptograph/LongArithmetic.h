@@ -13,7 +13,11 @@ class LongArithmetic {
     string number;
     bool isPositive = true;
 public:
-    explicit LongArithmetic(const string& other);
+    LongArithmetic(const string& other);
+
+    LongArithmetic(int other);
+
+    LongArithmetic();
 
     LongArithmetic(const LongArithmetic& other);
 
@@ -40,6 +44,8 @@ public:
     bool operator>=(const LongArithmetic& other) const;
 
     bool operator==(const LongArithmetic& other) const;
+
+    bool operator!=(const LongArithmetic& other) const;
 
     [[nodiscard]] string getString() const;
 

@@ -14,37 +14,38 @@ using namespace std;
 using ll = long long;
 
 namespace Users_NS {
+    template<typename Type>
     class User {
-        int koeffCode{};
-        int koeffDecode{};
-        int mod{};
-        int privateKey{};
-        int cRSA{};
-        int cVernam{};
+        Type koeffCode{};
+        Type koeffDecode{};
+        Type mod{};
+        Type privateKey{};
+        Type cRSA{};
+        Type cVernam{};
 
     public:
-        int nRSA{};
-        int dRSA{};
-        int nRSAOther{};
-        int dRSAOther{};
-        int publicKey{};
-        int g{};
-        int publicKeyOther{};
+        Type nRSA{};
+        Type dRSA{};
+        Type nRSAOther{};
+        Type dRSAOther{};
+        Type publicKey{};
+        Type g{};
+        Type publicKeyOther{};
         enum class KeyIndex {
             KOEFF_FOR_CODE = 0,
             KOEFF_FOR_DECODE
         };
 
-        explicit User(int mod);
+        explicit User(Type mod);
 
         //ll calcMessage(ll partMessage, KeyIndex keyIndex);
-        ll calcMessage(ll partMessage,
-                       const function<int(int, int, int)> &calcLocalMessage,
+        Type calcMessage(Type partMessage,
+                       const function<Type(Type, Type, Type)> &calcLocalMessage,
                        const string &paramForLambda);
 
         void setup();
 
-        [[nodiscard]] int getMod() const;
+        [[nodiscard]] Type getMod() const;
 
         void setVernam(unsigned char commonKey);
     };

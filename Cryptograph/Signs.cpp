@@ -188,15 +188,68 @@ namespace{
 }
 
 namespace Sign_NS{
-    void RSA::signing(const string& inputFileName, const string& outputFileName,
-                     Users_NS::User& alice, Users_NS::User& bob) {
+    template<typename Type>
+    void RSA<Type>::signing(const string& inputFileName,
+                     Users_NS::User<Type>& user) {
         std::ifstream input( inputFileName, std::ifstream::binary );
-        std::ofstream output( outputFileName, std::ios::binary );
         char message;
         string fullFile;
         CalcHashMD5 hashHolder;
         constexpr int maxBufSize = 10000;
+        ll cntTemp = 0;
         while (input.get(message)) {
+            ++cntTemp;
+            fullFile+=message;
+            if (fullFile.size()>maxBufSize) {
+                hashHolder.addStringToHash(fullFile);
+                fullFile.clear();
+            }
+        }
+        cout << cntTemp << endl;
+        input.close();
+        hashHolder.addStringToHash(fullFile);
+        auto fileHashOct = hashHolder.getHash();
+        auto fileHash = transformToDec(fileHashOct);
+        cout << fileHashOct << endl;
+        cout << fileHash.getString() << endl;
+
+        auto calculatorMessage = [](LongArithmetic message, LongArithmetic key, LongArithmetic mod){return fastPow(message, key, mod);};
+        auto sign = user.calcMessage(fileHash, calculatorMessage,"RC");
+
+        ll cntOfExtraZero = (user.nRSA).getString().size() - sign.getString().size();
+        string strSignToFile;
+        for (int i=0;i<cntOfExtraZero;++i)
+            strSignToFile+='0';
+        strSignToFile +=sign.getString();
+
+        std::ofstream output;
+        output.open(inputFileName, std::ios_base::app);
+        cout << strSignToFile << endl;
+        cout << endl;
+        cout << "###############" << endl;
+        for (auto v:strSignToFile)
+            output << v;
+        output.close();
+    }
+    template class IFileSign<LongArithmetic>;
+
+    template<typename Type>
+    bool RSA<Type>::checkSign(const string& inputFileName,
+                       Users_NS::User<Type>& user) {
+        LongArithmetic fileSize;
+        std::ifstream input( inputFileName, std::ifstream::binary );
+        char message;
+        while (input.get(message)) {
+            fileSize = fileSize+1;
+        }
+        input.close();
+
+        input.open( inputFileName, std::ifstream::binary );
+        CalcHashMD5 hashHolder;
+        constexpr int maxBufSize = 10000;
+        string fullFile;
+        for (LongArithmetic i(0); i < fileSize - user.nRSA.getString().size(); i = i+1) {
+            input.get(message);
             fullFile+=message;
             if (fullFile.size()>maxBufSize) {
                 hashHolder.addStringToHash(fullFile);
@@ -208,16 +261,15 @@ namespace Sign_NS{
         auto fileHash = transformToDec(fileHashOct);
         cout << fileHashOct << endl;
         cout << fileHash.getString() << endl;
-
-        auto calculatorMessage = [](LongArithmetic message, int key, int mod){return fastPow(message, key, mod);};
-        auto sign = alice.calcMessage(fileHash, calculatorMessage,"RC");
+        string mayBeStrSign;
+        while (input.get(message)) {
+            mayBeStrSign+=message;
+        }
 
         input.close();
-        output.close();
-    }
 
-    void RSA::checkSign(const string& inputFileName, const string& outputFileName,
-                       Users_NS::User& alice, Users_NS::User& bob) {
-
+        cout << mayBeStrSign << endl;
+        return fileHash == fastPow(LongArithmetic(mayBeStrSign), user.dRSA, user.nRSA);
     }
+    template class RSA<LongArithmetic>;
 }

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 project(CryptographGlobal)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 
 set (SOURCE_FILES main.cpp)
 add_executable(cryptograph_samples ${SOURCE_FILES})

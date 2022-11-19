@@ -14,49 +14,54 @@
 using namespace std;
 
 namespace CryptoGraph_NS {
+    template<typename Type>
     class IFileCrypto {
     public:
         virtual void coding(const string &inputFileName, const string &outputFileName,
-                            Users_NS::User &alice, Users_NS::User &bob) = 0;
+                            Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) = 0;
 
         virtual void decoding(const string &inputFileName, const string &outputFileName,
-                              Users_NS::User &alice, Users_NS::User &bob) = 0;
+                              Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) = 0;
     };
 
-    class Shamir : public IFileCrypto {
+    template<typename Type>
+    class Shamir : public IFileCrypto<Type> {
     public:
         void coding(const string &inputFileName, const string &outputFileName,
-                    Users_NS::User &alice, Users_NS::User &bob) override;
+                    Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
 
         void decoding(const string &inputFileName, const string &outputFileName,
-                      Users_NS::User &alice, Users_NS::User &bob) override;
+                      Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
     };
 
-    class ElGamal : public IFileCrypto {
+    template<typename Type>
+    class ElGamal : public IFileCrypto<Type> {
     public:
         void coding(const string &inputFileName, const string &outputFileName,
-                    Users_NS::User &alice, Users_NS::User &bob) override;
+                    Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
 
         void decoding(const string &inputFileName, const string &outputFileName,
-                      Users_NS::User &alice, Users_NS::User &bob) override;
+                      Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
     };
 
-    class RSA : public IFileCrypto {
+    template<typename Type>
+    class RSA : public IFileCrypto<Type> {
     public:
         void coding(const string &inputFileName, const string &outputFileName,
-                    Users_NS::User &alice, Users_NS::User &bob) override;
+                    Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
 
         void decoding(const string &inputFileName, const string &outputFileName,
-                      Users_NS::User &alice, Users_NS::User &bob) override;
+                      Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
     };
 
-    class Vernam : public IFileCrypto {
+    template<typename Type>
+    class Vernam : public IFileCrypto<Type> {
     public:
         void coding(const string &inputFileName, const string &outputFileName,
-                    Users_NS::User &alice, Users_NS::User &bob) override;
+                    Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
 
         void decoding(const string &inputFileName, const string &outputFileName,
-                      Users_NS::User &alice, Users_NS::User &bob) override;
+                      Users_NS::User<Type> &alice, Users_NS::User<Type> &bob) override;
     };
 }
 

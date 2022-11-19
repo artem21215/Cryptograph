@@ -26,6 +26,14 @@ LongArithmetic::LongArithmetic(const string& other) : number(other) {
         isPositive = true;
 }
 
+LongArithmetic::LongArithmetic(const int other){
+    *this = LongArithmetic(to_string(other));
+}
+
+LongArithmetic::LongArithmetic(){
+    *this = LongArithmetic("0");
+}
+
 LongArithmetic::LongArithmetic(const LongArithmetic& other):isPositive(other.isPositive), number(other.number){
     deleteExtraSpaces(this->number);
     if (number.empty())
@@ -64,7 +72,10 @@ LongArithmetic LongArithmetic::operator-(const LongArithmetic& other) const {
         return second + first;
     }
 
-    auto [first, second] = std::make_pair(number, other.number);
+    auto tempResult = std::make_pair(number, other.number);;
+    auto first = tempResult.first;
+    auto second = tempResult.second;
+    //auto [first, second] = std::make_pair(number, other.number);
     if (first.size() < second.size())
         swap(first, second);
     if (first.size() == second.size() && first<second)
@@ -251,6 +262,10 @@ bool LongArithmetic::operator>=(const LongArithmetic &other) const{
 
 bool LongArithmetic::operator==(const LongArithmetic &other) const{
     return (isPositive == other.isPositive && number == other.number);
+}
+
+bool LongArithmetic::operator!=(const LongArithmetic& other) const{
+    return !(*this == other);
 }
 
 string LongArithmetic::getString() const {

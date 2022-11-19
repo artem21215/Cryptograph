@@ -90,8 +90,4 @@ TEST(LongAtithmeticTests, testOperators){
     //EXPECT_EQ((bigNegative % bigPositive).getString(), "1045618834670226325508717124325986852041302");
     //EXPECT_EQ((bigPositive % bigNegative).getString(), "2348728578273489289582394781292859829589234");
     EXPECT_EQ((zero % bigNegative).getString(), "0");
-
-
-
-
 }

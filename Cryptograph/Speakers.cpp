@@ -14,46 +14,49 @@ namespace Users_NS{
         std::uniform_int_distribution<std::mt19937::result_type> randInt(1,mod/2);
         ll startNumber = randInt(rng);
         for (auto i=startNumber;i<mod;++i){
-            if (auto number = gcd(i,mod).g; number==1){
+            auto number = gcd(i,mod).g;
+            if (number==1){
                 return i;
             }
         }
         return 1;
     }
 
-    int User::getMod() const {
+    template<typename Type>
+    Type User<Type>::getMod() const {
         return mod;
     }
-    User::User(int mod) : mod(mod){
-        auto tempMod = mod-1;
-        koeffCode = chooseRandKoeff(tempMod);
-        koeffDecode = fastPow(koeffCode,tempMod-3, tempMod);
-        privateKey = koeffCode;
-        g = chooseRandomG(mod, (mod-1)/2);
-        int pRSA = 7351;
-        int qRSA = 6733;
-        nRSA = pRSA*qRSA;
-        ll phi = (pRSA-1)*(qRSA-1);
-        std::random_device dev;
-        std::mt19937 rng(dev());
-        std::uniform_int_distribution<std::mt19937::result_type> randInt(phi/4,phi);
-        ll startNumber = randInt(rng);
-        dRSA = 1;
-        for (int i=startNumber;i<phi;++i){
-            if (gcd(phi, i).g==1) {
-                dRSA = i;
-                break;
-            }
-        }
-        cRSA = gcd(phi,dRSA).y+phi;
 
+    template<typename Type>
+    User<Type>::User(Type mod) : mod(mod){
+        //auto tempMod = mod-1;
+        //koeffCode = chooseRandKoeff(tempMod);
+        //koeffDecode = fastPow(koeffCode,tempMod-3, tempMod);
+        //privateKey = koeffCode;
+        //g = chooseRandomG(mod, (mod-1)/2);
+        ll lenRSABits = 100;
+        Type pRSA = findRandSafePrime<LongArithmetic>(lenRSABits);
+        Type qRSA = findRandSafePrime<LongArithmetic>(lenRSABits);
+        nRSA = pRSA*qRSA;
+        LongArithmetic phi = (pRSA-1)*(qRSA-1);
+
+
+        while (dRSA == 0){
+            auto curNumb = findRandSafePrime<LongArithmetic>(lenRSABits - 10);
+            if (gcd(phi, curNumb).g == 1)
+                dRSA = curNumb;
+        }
+
+        cRSA = gcd<LongArithmetic>(phi,dRSA).y + phi;
     }
 
-    void User::setVernam(unsigned char commonKey){
+    template<typename Type>
+    void User<Type>::setVernam(unsigned char commonKey){
         cVernam = commonKey;
     }
 
-    void User::setup(){
+    template<typename Type>
+    void User<Type>::setup(){
         publicKey = fastPow(g,privateKey,mod);
     }
 
@@ -62,7 +65,8 @@ namespace Users_NS{
                                                       : fastPow(partMessage, koeffDecode, mod);
     }*/
 
-    ll User::calcMessage(ll partMessage, const function<int(int, int, int)>& calcLocalMessage, const string& paramForLambda) {
+    template<typename Type>
+    Type User<Type>::calcMessage(Type partMessage, const function<Type(Type, Type, Type)>& calcLocalMessage, const string& paramForLambda) {
         if (paramForLambda == "SC"){
             return calcLocalMessage(partMessage, koeffCode, mod);
         }
@@ -73,7 +77,7 @@ namespace Users_NS{
             return calcLocalMessage(partMessage, privateKey, mod);
         }
         else if (paramForLambda == "RC"){
-            return calcLocalMessage(partMessage, dRSAOther, nRSAOther);
+            return calcLocalMessage(partMessage, cRSA, nRSA);
         }
         else if (paramForLambda == "RD"){
             return calcLocalMessage(partMessage, cRSA, nRSA);
@@ -84,5 +88,8 @@ namespace Users_NS{
         else if (paramForLambda == "VD"){
             return calcLocalMessage(partMessage, cVernam, 0);
         }
+        return 00;
     }
+
+    template class User<LongArithmetic>;
 }

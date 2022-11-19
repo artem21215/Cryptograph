@@ -5,9 +5,13 @@
 #include <random>
 #include "modulArithmetics.h"
 #include "LongArithmetic.h"
+#include <openssl/bn.h>
+#include <openssl/rand.h>
+#include <iostream>
 
 using ll = long long;
-ll fastPow(ll a, ll step, ll mod){
+template<typename Type>
+Type fastPow(Type a, Type step, Type mod){
     if (step==0)
         return 1;
     if (step==1)
@@ -19,10 +23,12 @@ ll fastPow(ll a, ll step, ll mod){
     else
         return (fastPow(a,step-1, mod)%mod*(a%mod))%mod;
 }
+template LongArithmetic fastPow(LongArithmetic, LongArithmetic, LongArithmetic);
 
-GcdReturn gcd (ll a, ll b) {
-    ll x;
-    ll y;
+template<typename Type>
+GcdReturn<Type> gcd (Type a, Type b) {
+    Type x;
+    Type y;
     if (a == 0) {
         return {0,1,b};
     }
@@ -32,6 +38,7 @@ GcdReturn gcd (ll a, ll b) {
     y = res.x;
     return {x,y,res.g};
 }
+template GcdReturn<LongArithmetic> gcd(LongArithmetic, LongArithmetic);
 
 static std::vector<char> eratosfen(){
     int n = 1000000000;
@@ -68,5 +75,24 @@ int chooseRandomG(int mod, int q){
             return i;
     }
 }
+
+template<typename Type>
+Type findRandSafePrime(ll bits){
+    //srand(time(0));
+    BIGNUM *r;
+    const unsigned char rnd_seed[] = "string to make the random number generator think it has entropy";
+
+    r = BN_new();
+    RAND_seed(rnd_seed, sizeof rnd_seed); // or BN_generate_prime_ex may fail
+    //RAND_status();
+    //RAND_bytes(const_cast<unsigned char *>(rnd_seed), sizeof(rnd_seed));
+
+    BN_generate_prime_ex(r, bits, true, nullptr, nullptr, nullptr);
+    auto mod = LongArithmetic(string(BN_bn2dec(r)));
+
+    BN_free(r);
+    return mod;
+}
+template LongArithmetic findRandSafePrime(ll bits);
 
 
