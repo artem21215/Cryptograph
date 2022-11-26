@@ -23,8 +23,14 @@ namespace Users_NS {
         Type cRSA{};
         Type cVernam{};
         Type elGamalX{};
+        Type xGOST{};
 
     public:
+        vector<ll> cards;
+        Type yGOST{};
+        Type bigModP{};
+        Type aGost{};
+        Type bigQ{};
         Type elGamalY{};
         Type nRSA{};
         Type dRSA{};

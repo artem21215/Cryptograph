@@ -61,6 +61,16 @@ namespace Sign_NS {
         bool checkSign(const string &inputFileName,
                        Users_NS::User<Type> &alice) override;
     };
+
+    template<typename Type>
+    class GOST : public IFileSign<Type> {
+    public:
+        void signing(const string &inputFileName,
+                     Users_NS::User<Type> &alice) override;
+
+        bool checkSign(const string &inputFileName,
+                       Users_NS::User<Type> &alice) override;
+    };
 }
 
 

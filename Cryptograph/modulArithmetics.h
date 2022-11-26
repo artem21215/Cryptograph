@@ -5,6 +5,8 @@
 #ifndef THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H
 #define THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H
 #include <vector>
+#include <string>
+#include "LongArithmetic.h"
 
 using ll = long long;
 template<typename Type>
@@ -15,7 +17,7 @@ struct GcdReturn{
 };
 
 template<typename Type>
-Type fastPow(Type a, Type step, Type mod);
+Type fastPow(const Type& a, const Type& step, const Type& mod);
 
 template<typename Type>
 GcdReturn<Type> gcd(Type a, Type b);
@@ -25,7 +27,11 @@ int chooseRandomQ();
 
 int chooseRandomG(int mod, int q);
 
+ll convertLongArithmToInt(const LongArithmetic& other);
+
 template<typename Type>
 Type findRandSafePrime(ll bits);
+
+bool isPrimeBig(const std::string& number);
 
 #endif //THEORYPROGRAMMINGLANGUAGE_MODULARITHMETICS_H

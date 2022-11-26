@@ -11,7 +11,7 @@
 
 using ll = long long;
 template<typename Type>
-Type fastPow(Type a, Type step, Type mod){
+Type fastPow(const Type& a, const Type& step, const Type& mod){
     if (step==0)
         return 1;
     if (step==1)
@@ -23,7 +23,8 @@ Type fastPow(Type a, Type step, Type mod){
     else
         return (fastPow(a,step-1, mod)%mod*(a%mod))%mod;
 }
-template LongArithmetic fastPow(LongArithmetic, LongArithmetic, LongArithmetic);
+template LongArithmetic fastPow(const LongArithmetic&,const LongArithmetic&,const LongArithmetic&);
+template ll fastPow(const ll&,const ll&,const ll&);
 
 template<typename Type>
 GcdReturn<Type> gcd (Type a, Type b) {
@@ -76,6 +77,17 @@ int chooseRandomG(int mod, int q){
     }
 }
 
+ll convertLongArithmToInt(const LongArithmetic& other){
+    ll mayBeInt = 0;
+    for (auto v:other.getString()) {
+        if (v=='-')
+            continue;
+        mayBeInt *= 10;
+        mayBeInt += v - '0';
+    }
+    return mayBeInt;
+}
+
 template<typename Type>
 Type findRandSafePrime(ll bits){
     //srand(time(0));
@@ -88,11 +100,26 @@ Type findRandSafePrime(ll bits){
     //RAND_bytes(const_cast<unsigned char *>(rnd_seed), sizeof(rnd_seed));
 
     BN_generate_prime_ex(r, bits, true, nullptr, nullptr, nullptr);
+    //cout << BN_bn2dec(r) << endl;
     auto mod = LongArithmetic(string(BN_bn2dec(r)));
-
     BN_free(r);
+
     return mod;
 }
 template LongArithmetic findRandSafePrime(ll bits);
+
+bool isPrimeBig(const string& number){
+    //srand(time(0));
+    BIGNUM *r;
+    r = BN_new();
+
+    const unsigned char rnd_seed[] = "string to make the random number generator think it has entropy";
+    BN_dec2bn(&r, number.c_str());
+    [[maybe_unused]] auto tempCheck = string(BN_bn2dec(r));
+    bool ans = BN_is_prime_ex(r, 64, nullptr, nullptr) == 1;
+
+    BN_free(r);
+    return ans;
+}
 
 

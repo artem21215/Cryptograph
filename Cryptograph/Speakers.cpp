@@ -2,6 +2,7 @@
 #include <string>
 #include "modulArithmetics.h"
 #include "Speakers.h"
+#include <iostream>
 #include "LongArithmetic.h"
 
 using ll = long long;
@@ -29,11 +30,40 @@ namespace Users_NS{
 
     template<typename Type>
     User<Type>::User(Type mod) : mod(mod){
-        //auto tempMod = mod-1;
-        //koeffCode = chooseRandKoeff(tempMod);
-        //koeffDecode = fastPow(koeffCode,tempMod-3, tempMod);
-        //privateKey = koeffCode;
+        koeffCode = mod-1;
+        while (gcd<LongArithmetic>(mod-1, koeffCode).g != 1)
+            koeffCode = findRandSafePrime<LongArithmetic>(20);
+        koeffDecode = gcd<LongArithmetic>(mod-1,koeffCode).y + mod-1;
+
+        cout << koeffCode.getString() << endl;
+        cout << koeffDecode.getString() << endl;
+        auto res = koeffCode * koeffDecode % (mod-1);
+        cout << res.getString() << endl << endl;
         //g = chooseRandomG(mod, (mod-1)/2);
+        /*auto lenGOST = 50;
+        bigModP = LongArithmetic("10");
+        string bigTempMod;
+        for (int i=0;i<100;++i)
+            bigTempMod+='9';
+        LongArithmetic b;
+        while (!isPrimeBig(bigModP.getString())){
+            bigQ = findRandSafePrime<LongArithmetic>(lenGOST);
+            b = fastPow(LongArithmetic("2"), LongArithmetic(100 - 50), LongArithmetic(bigTempMod));
+            b = b + LongArithmetic("2");
+            b = b + LongArithmetic(4);
+            b = b + LongArithmetic("8");
+
+            bigModP = bigQ * b + 1;
+        }
+        aGost = 1;
+        while (aGost <= 1){
+            auto gTemp = findRandSafePrime<LongArithmetic>(10)% (bigModP - 2) + 1;
+            aGost = fastPow(gTemp, b , bigModP);
+        }
+        xGOST = findRandSafePrime<LongArithmetic>(100);
+        yGOST = fastPow(aGost, xGOST, bigModP);
+
+
         constexpr int lenElGamalG = 90;
         g = findRandSafePrime<LongArithmetic>(lenElGamalG);
         while (fastPow(g, (mod-1)/2, mod) == 1)
@@ -52,9 +82,8 @@ namespace Users_NS{
             auto curNumb = findRandSafePrime<LongArithmetic>(lenRSABits - 10);
             if (gcd(phi, curNumb).g == 1)
                 dRSA = curNumb;
-        }
-
-        cRSA = gcd<LongArithmetic>(phi,dRSA).y + phi;
+        }*/
+//        cRSA = gcd<LongArithmetic>(phi,dRSA).y + phi;
     }
 
     template<typename Type>
